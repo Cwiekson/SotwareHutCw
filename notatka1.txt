@@ -1,0 +1,41 @@
+npx create-create-app app(nazwa aplikacji --template typescript -------------tworzenie aplikacji
+npm start------------- startuje projekt
+npm install------------ instaluje potrzebne paczki
+
+
+I sposob
+<button onClick={()=>setliczba(liczba+1)}>+</button>
+
+
+
+
+II sposob
+    const zwiekszLiczbe = () =>{
+        setliczba(liczba+1);
+    }
+<button onClick={zwiekszLiczbe}>+</button>
+
+
+Prop
+interface  CounterProps {
+    initialNumber?: number;
+}
+const Counter:React.FC<CounterProps> = (props) => {
+
+    const [counterNumber,setCounterNumber]=React.useState(props.initialNumber ||0);
+
+
+w App
+<Counter initialNumber={0} />
+
+
+ctrl+/----------------------------------------------komentuje blok
+
+
+
+ if(onNumberChange) {
+             onNumberChange(number);
+         }
+
+to samo co  
+onNumberChange &&onNumberChange(number);
