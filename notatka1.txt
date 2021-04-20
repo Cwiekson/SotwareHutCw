@@ -1,4 +1,4 @@
-npx create-create-app app(nazwa aplikacji --template typescript -------------tworzenie aplikacji
+npx create-react-app app(nazwa aplikacji --template typescript -------------tworzenie aplikacji
 npm start------------- startuje projekt
 npm install------------ instaluje potrzebne paczki
 
