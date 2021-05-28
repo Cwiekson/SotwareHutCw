@@ -1,0 +1,180 @@
+actions/index.ts
+
+const context = new Map();
+
+export const getAction =<T extends any>(Action: new ()=>T ): T => {
+    if(context.has(Action)) {
+        return context.get(Action);
+    }
+    const action = new Action();
+    context.set(Action,action);
+    return action;
+}
+
+
+hooks/useAction.ts
+
+import React from "react";
+import {getAction} from "../store/actions";
+
+export const  useAction=<T extends any>(Action: new() => T) =>{
+    const {current} = React.useRef(getAction(Action));
+    return current;
+}
+
+
+view/todoPanel
+
+
+import React from "react";
+
+import {todosActions} from "../../store/actions/todos.actions";
+import {useAction} from "../../hooks/useAction";
+import {TodoService} from "../../services/todo.service";
+import {useSelector} from "react-redux";
+import todoSelector from "../../store/selectors/todo.selector";
+import {Todo} from "../../store/reducers/todos.reducer";
+
+const TodoPanel =()=>{
+    const todoActions= useAction(TodoService);
+    const todos=useSelector(todoSelector.getAll);
+    React.useEffect(()=>{
+       todosActions.setNewTodo(
+           {
+           id:123,
+               label: 'testowylabel',
+               done:false,
+               description:'pierwszy wpis',
+           }
+       )
+
+    },[]);
+    const deleteTodo=(todo:Todo)=>{
+        todoActions.setDeleteTodo(todo);
+    }
+
+    return(<div>
+            {todos.map((todo,index)=>(
+                <div key={index}>
+                    <button onClick={()=>deleteTodo(todo)}>Remove</button>
+                    <p>{todo.label}</p>
+                    <p>{todo.done}</p>
+                    <p>{todo.description}</p>
+                </div>
+            ))}
+                </div>
+);
+    }
+export default TodoPanel;
+
+
+
+
+
+services/todo.service.ts
+
+
+
+
+import {Todo} from "../store/reducers/todos.reducer";
+import store from "../store";
+import {todosActions} from "../store/actions/todos.actions";
+import {omdApiKey} from "../key";
+
+
+
+export class TodoService{
+    setNewTodo (todo: Todo){
+       store.dispatch(todosActions.setNewTodo(todo));
+    }
+    setTodoDone(todo: Todo){
+       store.dispatch(todosActions.setTodoDone(todo.id));
+    }
+
+    setDeleteTodo(todo:Todo){
+        store.dispatch(todosActions.setDeleteTodo(todo));
+
+}
+
+
+};
+
+
+
+
+view/todoPanel
+
+
+import React from "react";
+
+import {todosActions} from "../../store/actions/todos.actions";
+import {useAction} from "../../hooks/useAction";
+import {TodoService} from "../../services/todo.service";
+import {useSelector} from "react-redux";
+import todoSelector from "../../store/selectors/todo.selector";
+import {Todo} from "../../store/reducers/todos.reducer";
+
+const TodoPanel =()=>{
+    const todoActions= useAction(TodoService);
+    const todos=useSelector(todoSelector.getAll);
+    React.useEffect(()=>{
+       todosActions.setNewTodo(
+           {
+           id:123,
+               label: 'testowylabel',
+               done:false,
+               description:'pierwszy wpis',
+           }
+       )
+
+    },[]);
+    const deleteTodo=(todo:Todo)=>{
+        todoActions.setDeleteTodo(todo);
+    }
+
+    return(<div>
+            {todos.map((todo,index)=>(
+                <div key={index}>
+                    <button onClick={()=>deleteTodo(todo)}>Remove</button>
+                    <p>{todo.label}</p>
+                    <p>{todo.done}</p>
+                    <p>{todo.description}</p>
+                </div>
+            ))}
+                </div>
+);
+    }
+export default TodoPanel;
+
+
+selectors/todo.selector.ts
+
+import {createSelector} from "reselect";
+import {StoreState} from "../store";
+import {create} from "domain";
+
+
+
+
+const todoSelector= {
+    getAll:createSelector(
+        (state:StoreState)=> state.todos,
+        todos=>todos.list,
+    )
+};
+export default todoSelector;
+
+
+Apps.tsx
+
+ <Provider store={ store} >
+
+                <Switch>
+                    <Route path="/movie/:id" component={Movie}/>
+                    <Route path="/" component={Home} exact/>
+                    <Route path={"/todos"} component={TodoPanel}/>
+                    <Route path='*' component={Page404}/>
+                </Switch>
+                </Provider>
+
+
